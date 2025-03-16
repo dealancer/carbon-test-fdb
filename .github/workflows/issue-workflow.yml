@@ -71,7 +71,7 @@ jobs:
           CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: gpt-4o
           CARBON_INSTRUCTIONS:
-          CARBON_WORK_DIR: ../
+          CARBON_WORK_DIR: .
           CARBON_PROJECT_FILENAME: codebase.zip
           CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
