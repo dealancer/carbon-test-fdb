@@ -34,24 +34,25 @@ jobs:
               body: 'Thanks for opening this issue! Carbon AI is starting to work on it soon. 🚀'
             })
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      - name: Configure Git
-        run: |
-          git config --global user.name 'Carbon AI'
-          git config --global user.email 'carbon-ai@example.com'
-
       - name: Checkout Carbon AI
         uses: actions/checkout@v4
         with:
           repository: dealancer/carbon-cli
           path: carbon-cli
 
-      - name: Checkout repository
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd carbon-cli
+          pip install -r requirements.txt
+          cd ..
+
+      - name: Checkout project repository
         uses: actions/checkout@v4
         with:
           path: codebase
@@ -82,24 +83,28 @@ jobs:
           unzip -o codebase.zip
           echo "Unzipped codebase.zip archive"
 
+      - name: Get commit message and summary of changes
+        run: |
+          COMMIT_MESSAGE=$(jq -r '.pr_title // .commit_message' meta.json)
+          EXTENDED_DETAILS=$(jq -r '.extended_details // ""' meta.json)
+          echo "COMMIT_MESSAGE=${COMMIT_MESSAGE}" >> $GITHUB_ENV
+          echo "EXTENDED_DETAILS<<EOF" >> $GITHUB_ENV
+          echo "${EXTENDED_DETAILS}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'Carbon AI'
+          git config --global user.email 'carbon-ai@example.com'
+
       - name: Commit and push changes
         run: |
           sudo apt-get install -y jq
           cd codebase
           git checkout -b carbon/issue-${{ github.event.issue.number }}
           git add .
-          COMMIT_MSG=$(jq -r '.commit_message' ../meta.json)
-          git commit -m "Carbon AI: ${COMMIT_MSG}"
+          git commit -m "Carbon AI: ${{ env.COMMIT_MESSAGE }}"
           git push origin carbon/issue-${{ github.event.issue.number }}
-
-      - name: Create Pull Request
-        run: |
-          PR_TITLE=$(jq -r '.pr_title // .commit_message' meta.json)
-          PR_DETAILS=$(jq -r '.extended_details // ""' meta.json)
-          echo "PR_TITLE=${PR_TITLE}" >> $GITHUB_ENV
-          echo "PR_DETAILS<<EOF" >> $GITHUB_ENV
-          echo "${PR_DETAILS}" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
       - name: Create GitHub PR
         uses: actions/github-script@v7
@@ -108,8 +113,8 @@ jobs:
             const response = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Carbon AI: ${process.env.PR_TITLE}`,
-              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.PR_DETAILS}`,
+              title: `Carbon AI: ${process.env.COMMIT_MESSAGE}`,
+              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.EXTENDED_DETAILS}`,
               head: `carbon/issue-${context.issue.number}`,
               base: 'main'
             });
