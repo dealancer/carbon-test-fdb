@@ -8,8 +8,7 @@ jobs:
   update-pr:
     if: |
       github.event.issue.pull_request && 
-      contains(github.event.comment.body, format('@{0}', vars.CARBON_BOT_NAME)) &&
-      github.actor != vars.CARBON_BOT_NAME
+      contains(github.event.comment.body, format('@{0}', vars.CARBON_BOT_NAME))
     runs-on: ubuntu-latest
     permissions:
       issues: write

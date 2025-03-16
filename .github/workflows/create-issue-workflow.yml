@@ -7,8 +7,7 @@ on:
 jobs:
   create-issue:
     if: |
-      contains(github.event.issue.body, format('@{0}', vars.CARBON_BOT_NAME)) &&
-      github.actor != vars.CARBON_BOT_NAME
+      contains(github.event.issue.body, format('@{0}', vars.CARBON_BOT_NAME))
     runs-on: ubuntu-latest
     permissions:
       issues: write
