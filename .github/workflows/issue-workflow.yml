@@ -177,5 +177,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Carbon AI has created pull request #${ env.PR_NUMBER } for you to review. 👀`
+              body: `Carbon AI has created pull request #${process.env.PR_NUMBER} for you to review. 👀`
             })
