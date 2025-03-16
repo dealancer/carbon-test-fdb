@@ -1,0 +1,124 @@
+name: New Issue Workflow
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  issue-response:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - name: Add labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.addLabels({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['carbon-ai']
+            })
+
+      - name: Create welcome comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Thanks for opening this issue! Carbon AI is starting to work on it soon. 🚀'
+            })
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'Carbon AI'
+          git config --global user.email 'carbon-ai@example.com'
+
+      - name: Checkout Carbon AI
+        uses: actions/checkout@v4
+        with:
+          repository: dealancer/carbon-cli
+          path: carbon-cli
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: codebase
+
+      - name: Create zip of codebase
+        run: |
+          zip -r codebase.zip codebase -x "*.git/*"
+          echo "Created codebase.zip archive"
+
+      - name: Run Carbon CLI
+        env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CARBON_PROJECT: ${{ github.repository }}
+          CARBON_MODEL: gpt-4o
+          CARBON_WORK_DIR: ../
+          CARBON_PROJECT_FILENAME: codebase.zip
+          CARBON_META_FILENAME: meta.json
+          CARBON_ISSUE_ID: ${{ github.event.issue.number }}
+          CARBON_REQUEST: ${{ github.event.issue.body }}
+        run: |
+          python carbon-cli/src/run.py create issue
+
+      - name: Unzip modifierd codebase
+        run: |
+          unzip -o codebase.zip
+          echo "Unzipped codebase.zip archive"
+
+      - name: Commit and push changes
+        run: |
+          sudo apt-get install -y jq
+          cd codebase
+          git checkout -b carbon/issue-${{ github.event.issue.number }}
+          git add .
+          COMMIT_MSG=$(jq -r '.commit_message' ../meta.json)
+          git commit -m "Carbon AI: ${COMMIT_MSG}"
+          git push origin carbon/issue-${{ github.event.issue.number }}
+
+      - name: Create Pull Request
+        run: |
+          PR_TITLE=$(jq -r '.pr_title // .commit_message' meta.json)
+          PR_DETAILS=$(jq -r '.extended_details // ""' meta.json)
+          echo "PR_TITLE=${PR_TITLE}" >> $GITHUB_ENV
+          echo "PR_DETAILS<<EOF" >> $GITHUB_ENV
+          echo "${PR_DETAILS}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const response = await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Carbon AI: ${process.env.PR_TITLE}`,
+              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.PR_DETAILS}`,
+              head: `carbon/issue-${context.issue.number}`,
+              base: 'main'
+            });
+            
+            // Add labels to the PR
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: response.data.number,
+              labels: ['carbon-ai']
+            });
+
