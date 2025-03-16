@@ -27,7 +27,7 @@ jobs:
       - name: Create welcome comment
         uses: actions/github-script@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -119,7 +119,7 @@ jobs:
       - name: Create commit comment
         uses: actions/github-script@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -129,7 +129,6 @@ jobs:
             })
 
       - name: Create GitHub PR
-        id: create_pr
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.PAT_TOKEN }}
@@ -150,8 +149,7 @@ jobs:
               labels: ['carbon-ai']
             });
 
-            process.env.PR_NUMBER = response.data.number.toString();
-            core.setOutput('pr_number', response.data.number);
+            core.exportVariable('PR_NUMBER', response.data.number.toString());
 
       - name: Run Carbon CLI
         env:
@@ -166,18 +164,18 @@ jobs:
           CARBON_PROJECT_FILENAME: codebase.zip
           CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
-          CARBON_PR_ID: ${{ steps.create_pr.outputs.pr_number }}
+          CARBON_PR_ID: ${{ env.PR_NUMBER }}
         run: |
           python carbon-cli/src/run.py map pr
 
       - name: Create PR comment
         uses: actions/github-script@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Carbon AI has created pull request #${process.env.PR_NUMBER} for you to review. 👀`
+              body: `Carbon AI has created pull request #${ env.PR_NUMBER } for you to review. 👀`
             })
