@@ -26,8 +26,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: [
-                'Thanks for your comment!',
-                'Carbon AI is starting to work on it. 🚀'
+                'Thanks for your comment! Carbon AI is starting to work on it. 🚀'
               ].join('\n')
             })
 
@@ -74,8 +73,7 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CARBON_OWNER: ${{ github.repository_owner }}
-          CARBON_REPOSITORY: ${{ github.event.repository.name }}
+          CARBON_PROJECT: ${{ github.repository }}=
           CARBON_MODEL: ${{ vars.CARBON_MODEL }}
           CARBON_INSTRUCTIONS: ${{ vars.CARBON_INSTRUCTIONS }}
           CARBON_WORK_DIR: .
