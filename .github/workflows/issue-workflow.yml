@@ -4,9 +4,6 @@ on:
   issues:
     types: [opened]
 
-env:
-  AWS_BUCKET: 'your-bucket-name'  # Add the bucket name here as a variable
-
 jobs:
   issue-response:
     runs-on: ubuntu-latest
@@ -70,7 +67,7 @@ jobs:
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_BUCKET: ${{ env.AWS_BUCKET }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: gpt-4o
@@ -99,8 +96,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name 'Carbon AI'
-          git config --global user.email 'carbon-ai@example.com'
+          git config --global user.name 'Carbon AI Bot'
+          git config --global user.email 'carbonaibot@myrgorod.net'
 
       - name: Commit and push changes
         env:
@@ -154,7 +151,7 @@ jobs:
         env:
           AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          AWS_BUCKET: ${{ env.AWS_BUCKET }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: gpt-4o
