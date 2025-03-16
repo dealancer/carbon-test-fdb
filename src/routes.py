@@ -9,4 +9,4 @@ def hello_world():
 @routes.route("/example")
 def example():
     current_app.logger.debug('Route "/example" has been accessed.')
-    return 'HELLO EVERYONE!'
+    return 'Hello EXAMPLE everyone!'
