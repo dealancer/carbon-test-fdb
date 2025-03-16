@@ -5,3 +5,9 @@ routes = Blueprint('routes', __name__)
 def hello_world():
     current_app.logger.debug('Route "/" has been accessed.')
     return '<h1>Hello, World!</h1><img src="/static/img/flask.png">'
+
+@routes.route("/xyz")
+def random_string():
+    current_app.logger.debug('Route "/xyz" has been accessed.')
+    random_str = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+    return f'<p>Random String: {random_str}</p>'
