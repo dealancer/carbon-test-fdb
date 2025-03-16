@@ -26,8 +26,8 @@ jobs:
 
       - name: Create welcome comment
         uses: actions/github-script@v7
-        token: ${{ secrets.PAT_TOKEN }}
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -54,22 +54,6 @@ jobs:
           pip install -r requirements.txt
           cd ..
 
-      - name: Create an environment file
-        run: |
-          cat > carbon-cli/.env << EOL
-          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
-          AWS_BUCKET=${{ vars.AWS_BUCKET }}
-          OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-          CARBON_PROJECT=${{ github.repository }}
-          CARBON_MODEL=gpt-4o
-          CARBON_INSTRUCTIONS=
-          CARBON_WORK_DIR=.
-          CARBON_PROJECT_FILENAME=codebase.zip
-          CARBON_META_FILENAME=meta.json
-          EOL
-          echo "Created .env file in carbon-cli directory."
-
       - name: Checkout project repository
         uses: actions/checkout@v4
         with:
@@ -82,6 +66,16 @@ jobs:
 
       - name: Run Carbon CLI
         env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CARBON_PROJECT: ${{ github.repository }}
+          CARBON_MODEL: gpt-4o
+          CARBON_INSTRUCTIONS:
+          CARBON_WORK_DIR: .
+          CARBON_PROJECT_FILENAME: codebase.zip
+          CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
           CARBON_REQUEST: "${{ github.event.issue.title }}\n\n${{ github.event.issue.body }}"
         run: |
@@ -124,8 +118,8 @@ jobs:
 
       - name: Create commit comment
         uses: actions/github-script@v7
-        token: ${{ secrets.PAT_TOKEN }}
         with:
+          token: ${{ secrets.PAT_TOKEN }}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -161,6 +155,16 @@ jobs:
 
       - name: Run Carbon CLI
         env:
+          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_BUCKET: ${{ vars.AWS_BUCKET }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CARBON_PROJECT: ${{ github.repository }}
+          CARBON_MODEL: gpt-4o
+          CARBON_INSTRUCTIONS:
+          CARBON_WORK_DIR: .
+          CARBON_PROJECT_FILENAME: codebase.zip
+          CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
           CARBON_PR_ID: ${{ steps.create_pr.outputs.pr_number }}
         run: |
