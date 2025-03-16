@@ -73,7 +73,7 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CARBON_PROJECT: ${{ github.repository }}=
+          CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: ${{ vars.CARBON_MODEL }}
           CARBON_INSTRUCTIONS: ${{ vars.CARBON_INSTRUCTIONS }}
           CARBON_WORK_DIR: .
