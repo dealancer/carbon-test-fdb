@@ -74,7 +74,7 @@ jobs:
           CARBON_PROJECT_FILENAME: codebase.zip
           CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
-          CARBON_REQUEST: ${{ github.event.issue.body }}
+          CARBON_REQUEST: "${{ github.event.issue.title }}\n\n${{ github.event.issue.body }}"
         run: |
           python carbon-cli/src/run.py create issue
 
@@ -113,8 +113,8 @@ jobs:
             const response = await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `Carbon AI: ${process.env.COMMIT_MESSAGE}`,
-              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.EXTENDED_DETAILS}`,
+              title: `Carbon AI: ${env.COMMIT_MESSAGE}`,
+              body: `This PR addresses issue #${context.issue.number}\n\n${env.EXTENDED_DETAILS}`,
               head: `carbon/issue-${context.issue.number}`,
               base: 'main'
             });
