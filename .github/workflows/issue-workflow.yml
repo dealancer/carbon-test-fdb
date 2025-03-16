@@ -34,6 +34,7 @@ jobs:
               repo: context.repo.repo,
               body: 'Thanks for opening this issue! Carbon AI is starting to work on it. 🚀'
             })
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Checkout Carbon AI
         uses: actions/checkout@v4
@@ -120,6 +121,7 @@ jobs:
               repo: context.repo.repo,
               body: `Carbon AI has committed changes to the branch \`carbon/issue-${context.issue.number}\`. ✒️`
             })
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Create GitHub PR
         id: create_pr
@@ -157,10 +159,10 @@ jobs:
           CARBON_MODEL: gpt-4o
           CARBON_INSTRUCTIONS:
           CARBON_WORK_DIR: .
+          CARBON_PROJECT_FILENAME: codebase.zip
           CARBON_META_FILENAME: meta.json
           CARBON_ISSUE_ID: ${{ github.event.issue.number }}
           CARBON_PR_ID: ${{ steps.create_pr.outputs.pr_number }}
-          CARBON_REQUEST: "${{ github.event.issue.title }}\n\n${{ github.event.issue.body }}"
         run: |
           python carbon-cli/src/run.py map pr
 
@@ -174,3 +176,4 @@ jobs:
               repo: context.repo.repo,
               body: `Carbon AI has created pull request #${steps.create_pr.outputs.pr_number} for you to review. 👀`
             })
+          token: ${{ secrets.PAT_TOKEN }}
