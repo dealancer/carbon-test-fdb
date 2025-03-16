@@ -7,7 +7,7 @@ on:
 jobs:
   create-issue:
     if: |
-      contains(github.event.issue.body, '@carbonaibot')
+      contains(github.event.issue.body, '${{ vars.CARBON_BOT_NAME }}')
     runs-on: ubuntu-latest
     permissions:
       issues: write

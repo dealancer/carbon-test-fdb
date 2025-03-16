@@ -8,7 +8,7 @@ jobs:
   update-pr:
     if: |
       github.event.issue.pull_request && 
-      contains(github.event.comment.body, '@carbonaibot')
+      contains(github.event.comment.body, '${{ vars.CARBON_BOT_NAME }}')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -125,7 +125,7 @@ jobs:
           github-token: ${{ secrets.PAT_TOKEN }}
           script: |
             const commentBody = [
-              `Carbon AI has committed changes to the branch \`${env.HEAD_REF}\`. ✒️`,
+              `Carbon AI has committed changes to the branch \`${process.env.HEAD_REF}\`. ✒️`,
               ``,
               `Please review. 👀`,
               ``,
