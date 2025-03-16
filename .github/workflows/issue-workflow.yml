@@ -70,7 +70,7 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CARBON_PROJECT: ${{ github.repository_owner }}-${{ github.repository }}
+          CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: ${{ vars.CARBON_MODEL }}
           CARBON_INSTRUCTIONS: ${{ vars.CARBON_INSTRUCTIONS }}
           CARBON_WORK_DIR: .
@@ -137,7 +137,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Carbon AI: ${process.env.COMMIT_MESSAGE}`,
-              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.EXTENDED_DETAILS}`,
+              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.EXTENDED_DETAILS}.`,
               head: `carbon/issue-${context.issue.number}`,
               base: 'main'
             });
@@ -157,7 +157,7 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_BUCKET: ${{ vars.AWS_BUCKET }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          CARBON_PROJECT: ${{ github.repository_owner }}-${{ github.repository }}
+          CARBON_PROJECT: ${{ github.repository }}
           CARBON_MODEL: ${{ vars.CARBON_MODEL }}
           CARBON_INSTRUCTIONS: ${{ vars.CARBON_INSTRUCTIONS }}
           CARBON_WORK_DIR: .
