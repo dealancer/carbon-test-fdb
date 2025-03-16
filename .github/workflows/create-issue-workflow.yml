@@ -6,6 +6,8 @@ on:
 
 jobs:
   create-issue:
+    if: |
+      contains(github.event.issue.body, '@carbonaibot')
     runs-on: ubuntu-latest
     permissions:
       issues: write
