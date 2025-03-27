@@ -105,8 +105,8 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config --global user.name 'Carbon AI Bot'
-          git config --global user.email 'carbonaibot@myrgorod.net'
+          git config --global user.name '${{ vars.CARBON_BOT_NAME }}'
+          git config --global user.email '${{ vars.CARBON_BOT_EMAIL }}'
 
       - name: Commit and push changes
         env:
