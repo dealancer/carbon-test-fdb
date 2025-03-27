@@ -140,7 +140,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Carbon AI: ${process.env.COMMIT_MESSAGE}`,
-              body: `This PR addresses issue #${context.issue.number}\n\n${process.env.EXTENDED_DETAILS}.`,
+              body: `This PR addresses issue #${context.issue.number}.\n\n${process.env.EXTENDED_DETAILS}`,
               head: `carbon/issue-${context.issue.number}`,
               base: 'main'
             });
